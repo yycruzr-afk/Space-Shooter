@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.yordin.rompe_bloques.entidades.Balas;
+import com.yordin.rompe_bloques.entidades.Enemigos;
 import com.yordin.rompe_bloques.entidades.Jugador;
 
 import java.util.ArrayList;
@@ -32,6 +34,11 @@ public class Core implements ApplicationListener {
     private float tiempoUltimoDisparo;
     private float intervaloDisparo;
 
+    ArrayList<Enemigos> listaEnemigos;
+    Texture enemigoTextura;
+    private float ultimoEnemigoTiempo;
+    private float enemigoIntervalo;
+
 
     @Override
     public void create() {
@@ -50,6 +57,11 @@ public class Core implements ApplicationListener {
         balaTexture = new Texture("bala.png");
         tiempoUltimoDisparo = 0;
         intervaloDisparo = 0.3f;
+
+        listaEnemigos = new ArrayList<>();
+        enemigoTextura = new Texture("enemigo.png");
+        ultimoEnemigoTiempo = 0;
+        enemigoIntervalo = 1f;
     }
 
     @Override
@@ -74,22 +86,23 @@ public class Core implements ApplicationListener {
 
         batch.begin();
         player.dibujar(batch);
-
-        for (Balas b : listaBalas){
-            b.dibujar(batch);
-        }
+        for (Balas b : listaBalas) b.dibujar(batch);
+        for(Enemigos e : listaEnemigos) e.dibujar(batch);
         batch.end();
 
 
         shape.begin(ShapeRenderer.ShapeType.Line);
         player.dibujarHitBox(shape);
         for(Balas b : listaBalas) b.dibujarHitbox(shape);
+        for(Enemigos e : listaEnemigos) e.dibujarHitBox(shape);
         shape.end();
     }
     public void logic(){
         delta = Gdx.graphics.getDeltaTime();
         tiempoUltimoDisparo += delta;
         player.mover(delta);
+
+        crearEnemigo();
 
         Iterator<Balas> it = listaBalas.iterator();
         while (it.hasNext()){
@@ -101,7 +114,20 @@ public class Core implements ApplicationListener {
             }
         }
 
+
+
+        Iterator<Enemigos> itEnem = listaEnemigos.iterator();
+        while (itEnem.hasNext()){
+            Enemigos e = itEnem.next();
+            e.mover(delta);
+
+            if(e.getHitBox().y <= -1){
+                itEnem.remove();
+            }
+        }
+
     }
+
     public void input(){
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             if(tiempoUltimoDisparo >= intervaloDisparo){
@@ -110,6 +136,15 @@ public class Core implements ApplicationListener {
             }
         }
 
+    }
+
+    public void crearEnemigo(){
+        ultimoEnemigoTiempo += delta;
+        if(ultimoEnemigoTiempo >= enemigoIntervalo){
+            float t = MathUtils.random(10, anchoPantalla - enemigoTextura.getWidth() - 10);
+            listaEnemigos.add(new Enemigos(enemigoTextura, t));
+            ultimoEnemigoTiempo = 0;
+        }
     }
 
     @Override
