@@ -2,10 +2,15 @@ package com.yordin.rompe_bloques;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.yordin.rompe_bloques.entidades.Balas;
 import com.yordin.rompe_bloques.entidades.Jugador;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Core implements ApplicationListener {
@@ -19,6 +24,8 @@ public class Core implements ApplicationListener {
     Texture texturaPlayer;
     Jugador player;
 
+    ArrayList<Balas> listaBalas;
+    Texture balaTexture;
 
     @Override
     public void create() {
@@ -30,6 +37,9 @@ public class Core implements ApplicationListener {
 
         texturaPlayer = new Texture("nave.png");
         player = new Jugador(texturaPlayer);
+
+        listaBalas = new ArrayList<>();
+        balaTexture = new Texture("bala.png");
     }
 
     @Override
@@ -55,6 +65,9 @@ public class Core implements ApplicationListener {
 
         player.dibujar(batch);
 
+        for (Balas b : listaBalas){
+            b.dibujar(batch);
+        }
 
         batch.end();
     }
@@ -62,8 +75,21 @@ public class Core implements ApplicationListener {
         delta = Gdx.graphics.getDeltaTime();
         player.mover(delta);
 
+        Iterator<Balas> it = listaBalas.iterator();
+        while (it.hasNext()){
+            Balas b = it.next();
+            b.mover(delta);
+
+            if(b.getHitBox().y >= alturaPantalla){
+                it.remove();
+            }
+        }
+
     }
     public void input(){
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+            listaBalas.add(player.disparar(balaTexture));
+        }
 
     }
 

@@ -50,6 +50,10 @@ public class Jugador {
         batch.draw(textura, hitBox.x, hitBox.y, hitBox.width, hitBox.height);
     }
 
+    public Balas disparar(Texture texturaBala){
+        return new Balas(texturaBala, hitBox.x, hitBox.y);
+    }
+
     public float getVelocidad() {
         return velocidad;
     }
