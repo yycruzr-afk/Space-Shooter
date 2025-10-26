@@ -2,8 +2,10 @@ package com.yordin.rompe_bloques.entidades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -52,6 +54,11 @@ public class Jugador {
 
     public Balas disparar(Texture texturaBala){
         return new Balas(texturaBala, hitBox.x, hitBox.y);
+    }
+
+    public void dibujarHitBox(ShapeRenderer shape){
+        shape.setColor(Color.GREEN);
+        shape.rect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
     }
 
     public float getVelocidad() {

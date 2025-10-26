@@ -1,7 +1,9 @@
 package com.yordin.rompe_bloques.entidades;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Balas {
@@ -29,6 +31,10 @@ public class Balas {
         batch.draw(textura, hitBox.x, hitBox.y);
     }
 
+    public void dibujarHitbox(ShapeRenderer shape){
+        shape.setColor(Color.ORANGE);
+        shape.rect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+    }
     public Texture getTextura() {
         return textura;
     }

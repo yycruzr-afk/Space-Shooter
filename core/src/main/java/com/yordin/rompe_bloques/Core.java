@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.yordin.rompe_bloques.entidades.Balas;
 import com.yordin.rompe_bloques.entidades.Jugador;
 
@@ -18,6 +19,8 @@ public class Core implements ApplicationListener {
     float anchoPantalla;
     float alturaPantalla;
 
+    ShapeRenderer shape;
+
     SpriteBatch batch;
     float delta;
 
@@ -26,11 +29,16 @@ public class Core implements ApplicationListener {
 
     ArrayList<Balas> listaBalas;
     Texture balaTexture;
+    private float tiempoUltimoDisparo;
+    private float intervaloDisparo;
+
 
     @Override
     public void create() {
         anchoPantalla = Gdx.graphics.getWidth();
         alturaPantalla = Gdx.graphics.getHeight();
+
+        shape = new ShapeRenderer();
 
         batch = new SpriteBatch();
         delta = Gdx.graphics.getDeltaTime();
@@ -40,6 +48,8 @@ public class Core implements ApplicationListener {
 
         listaBalas = new ArrayList<>();
         balaTexture = new Texture("bala.png");
+        tiempoUltimoDisparo = 0;
+        intervaloDisparo = 0.3f;
     }
 
     @Override
@@ -59,20 +69,26 @@ public class Core implements ApplicationListener {
     }
 
     public void draw(){
+        Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-
         player.dibujar(batch);
 
         for (Balas b : listaBalas){
             b.dibujar(batch);
         }
-
         batch.end();
+
+
+        shape.begin(ShapeRenderer.ShapeType.Line);
+        player.dibujarHitBox(shape);
+        for(Balas b : listaBalas) b.dibujarHitbox(shape);
+        shape.end();
     }
     public void logic(){
         delta = Gdx.graphics.getDeltaTime();
+        tiempoUltimoDisparo += delta;
         player.mover(delta);
 
         Iterator<Balas> it = listaBalas.iterator();
@@ -88,7 +104,10 @@ public class Core implements ApplicationListener {
     }
     public void input(){
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-            listaBalas.add(player.disparar(balaTexture));
+            if(tiempoUltimoDisparo >= intervaloDisparo){
+                listaBalas.add(player.disparar(balaTexture));
+                tiempoUltimoDisparo = 0;
+            }
         }
 
     }
