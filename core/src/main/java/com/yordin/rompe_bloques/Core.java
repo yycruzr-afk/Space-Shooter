@@ -126,6 +126,7 @@ public class Core implements ApplicationListener {
             }
         }
 
+        colisionBalasEnemigos();
     }
 
     public void input(){
@@ -144,6 +145,24 @@ public class Core implements ApplicationListener {
             float t = MathUtils.random(10, anchoPantalla - enemigoTextura.getWidth() - 10);
             listaEnemigos.add(new Enemigos(enemigoTextura, t));
             ultimoEnemigoTiempo = 0;
+        }
+    }
+
+    public void colisionBalasEnemigos(){
+        Iterator<Balas> itBalas = listaBalas.iterator();
+        while(itBalas.hasNext()){
+            Balas b = itBalas.next();
+
+            Iterator<Enemigos> itEnemigos = listaEnemigos.iterator();
+            while (itEnemigos.hasNext()){
+                Enemigos e = itEnemigos.next();
+
+                if(b.getHitBox().overlaps(e.getHitBox())){
+                    itBalas.remove();
+                    itEnemigos.remove();
+                    break;
+                }
+            }
         }
     }
 
